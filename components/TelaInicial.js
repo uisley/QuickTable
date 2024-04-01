@@ -3,6 +3,7 @@ import { View, Image, Text, Button, StyleSheet } from "react-native";
 import NavBar from "./NavBar";
 import { CameraView, Camera } from "expo-camera/next";
 import axios from "axios";
+import * as SecureStore from "expo-secure-store";
 
 const TelaInicial = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -17,6 +18,10 @@ const TelaInicial = ({ navigation }) => {
     };
     getBarCodeScannerPermissions();
   }, []);
+
+  async function save(key, value) {
+    await SecureStore.setItemAsync(key, value);
+  }
 
   const renderCamera = () => {
     <View style={styles.cameraContainer}>
@@ -33,16 +38,15 @@ const TelaInicial = ({ navigation }) => {
 
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
-    // setAbrirCamera(false);
 
     const url = `https://quicktable-back.onrender.com/reservas/entrarNaReserva/${data}`;
-
-    navigation.navigate("Cardapio");
-
-    /*try {
+    try {
       const response = await axios.post(url);
 
       if (response.status == 200) {
+        console.info("Entrou na reserva");
+        save("mesa", data);
+
         navigation.navigate("Cardapio");
       } else {
         console.error("Erro ao entrar na reserva");
@@ -50,7 +54,7 @@ const TelaInicial = ({ navigation }) => {
       }
     } catch (error) {
       console.error(error);
-    }*/
+    }
   };
 
   if (hasPermission === null) {
