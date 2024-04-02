@@ -3,12 +3,10 @@ import {
   View,
   Text,
   StyleSheet,
-  View,
-  Text,
   Image,
-  StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Pressable,
 } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
