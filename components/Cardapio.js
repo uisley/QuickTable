@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 
 import NavBar from "./NavBar";
 
-const Cardapio = ({ navigation }) => {
+const Cardapio = ({ navigation, route }) => {
   const [idMesa, setIdMesa] = useState("");
   const [data, setData] = useState([]);
+  const [carrinho, setCarrinho] = useState([]);
 
   const DataCard = ({ item }) => {
     return (
@@ -57,6 +65,14 @@ const Cardapio = ({ navigation }) => {
             <DataCard key={item.id} item={item} />
           ))}
         </View>
+        <Pressable
+          style={styles.button}
+          onPress={() => {
+            navigation.navigate("Carrinho", { carrinhoItens: carrinho });
+          }}
+        >
+          <Text style={styles.btn_text_imagem}>Carrinho</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -96,6 +112,16 @@ const styles = StyleSheet.create({
   price: {
     marginBottom: 8,
     color: "#fff",
+  },
+  button: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: "#FFD818",
+    marginTop: 15,
   },
 });
 
