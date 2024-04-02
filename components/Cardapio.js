@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
+  StyleSheet,
+  View,
+  Text,
   Image,
   StyleSheet,
   TouchableOpacity,
-  Pressable,
+  ScrollView,
 } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
@@ -28,6 +31,7 @@ const Cardapio = ({ navigation, route }) => {
       </View>
     );
   };
+
   async function getValueFor(key) {
     let result = await SecureStore.getItemAsync(key);
     if (result) {
@@ -60,7 +64,7 @@ const Cardapio = ({ navigation, route }) => {
         <Text style={styles.titulo}>MESA {idMesa}</Text>
       </View>
       <View style={styles.categoriesContainer}>
-        <View>
+        <View style={styles.pratos}>
           {data.map((item) => (
             <DataCard key={item.id} item={item} />
           ))}
@@ -100,13 +104,14 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   title: {
-    fontSize: 18,
+    fontSize: 28,
     fontWeight: "bold",
     marginBottom: 8,
     color: "#fff",
   },
   category: {
     marginBottom: 4,
+    fontSize: 13,
     color: "#fff",
   },
   price: {
@@ -122,6 +127,11 @@ const styles = StyleSheet.create({
     elevation: 3,
     backgroundColor: "#FFD818",
     marginTop: 15,
+  },
+  card: {
+    margin: 5,
+    backgroundColor: "gray",
+    padding: 10,
   },
 });
 
