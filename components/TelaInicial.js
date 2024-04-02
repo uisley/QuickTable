@@ -39,6 +39,8 @@ const TelaInicial = ({ navigation }) => {
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
 
+    console.log("QR code detectado!");
+
     const url = `https://quicktable-back.onrender.com/reservas/entrarNaReserva/${data}`;
     try {
       const response = await axios.post(url);

@@ -1,11 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import * as SecureStore from "expo-secure-store";
+import axios from "axios";
 
 import NavBar from "./NavBar";
 
 const Cardapio = ({ navigation }) => {
   const [idMesa, setIdMesa] = useState("");
+  const [data, setData] = useState([]);
+
+  const DataCard = ({ item }) => {
+    return (
+      <View style={styles.card}>
+        <Text style={styles.title}>{item.nome}</Text>
+        <Text style={styles.category}>
+          Categoria: {item.categoria.categoria}
+        </Text>
+        <Text style={styles.price}>Preço: R${item.preco}</Text>
+      </View>
+    );
+  };
   async function getValueFor(key) {
     let result = await SecureStore.getItemAsync(key);
     if (result) {
@@ -15,8 +29,20 @@ const Cardapio = ({ navigation }) => {
     }
   }
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(
+        "https://quicktable-back.onrender.com/cardapio"
+      );
+      setData(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     getValueFor("mesa");
+    fetchData();
   }, []);
 
   return (
@@ -25,7 +51,13 @@ const Cardapio = ({ navigation }) => {
       <View style={styles.header}>
         <Text style={styles.titulo}>MESA {idMesa}</Text>
       </View>
-      <View style={styles.categoriesContainer}></View>
+      <View style={styles.categoriesContainer}>
+        <View>
+          {data.map((item) => (
+            <DataCard key={item.id} item={item} />
+          ))}
+        </View>
+      </View>
     </View>
   );
 };
@@ -49,6 +81,20 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 32,
     fontWeight: "bold",
+    color: "#fff",
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 8,
+    color: "#fff",
+  },
+  category: {
+    marginBottom: 4,
+    color: "#fff",
+  },
+  price: {
+    marginBottom: 8,
     color: "#fff",
   },
 });
