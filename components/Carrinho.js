@@ -24,7 +24,8 @@ const Carrinho = ({ route, navigation }) => {
   const budgetCalculator = () => {
     let total = 0;
     carrinhoItens.forEach((item) => {
-      total += Number(item.preco);
+      total += Number(item.preco) * Number(item.quantidade);
+      total = Math.round(total * 100) / 100;
     });
     return total;
   };
@@ -41,21 +42,16 @@ const Carrinho = ({ route, navigation }) => {
 
   const finalizarPedido = async () => {
     const url = "https://quicktable-back.onrender.com/pedidos";
+
+    const itemQuantidade = carrinhoItens.map((item) => ({
+      item: {
+        id: item.id,
+      },
+      quantidade: item.quantidade,
+    }));
+
     const corpo = {
-      itemQuantidade: [
-        {
-          item: {
-            id: 1,
-          },
-          quantidade: 1,
-        },
-        {
-          item: {
-            id: 2,
-          },
-          quantidade: 1,
-        },
-      ],
+      itemQuantidade,
       reserva: {
         id: Number(idReserva),
       },
@@ -67,9 +63,7 @@ const Carrinho = ({ route, navigation }) => {
       .then((response) => {
         alert("Seu pedido foi concluído com sucesso!");
       })
-      .catch((error) => {
-        // Trate o erro, se necessário
-      });
+      .catch((error) => {});
   };
 
   useEffect(() => {
@@ -80,31 +74,30 @@ const Carrinho = ({ route, navigation }) => {
       setNome(n);
     };
     dados();
+    console.log(carrinhoItens[0].id);
   }, []);
 
   return (
     <ScrollView style={styles.bg_black}>
       <NavBar navigation={navigation} nome="Carrinho" />
-      <View style={styles.container}>
-        {carrinhoItens && carrinhoItens.length > 0 ? (
-          <View style={{ padding: 15 }}>
-            {carrinhoItens.map((item) => (
-              <View key={item.id} style={styles.view}>
-                <Text style={styles.text}>{item.quantidade}x</Text>
-                <Text style={styles.text}>{item.lanche}</Text>
-                <Text style={styles.text}>Preço: R$ {item.preco}</Text>
-              </View>
-            ))}
-          </View>
-        ) : (
-          <Text style={[styles.text, { padding: 15, marginTop: 120 }]}>
-            Nenhum item no carrinho
-          </Text>
-        )}
-      </View>
+      {carrinhoItens && carrinhoItens.length > 0 ? (
+        <View style={{ padding: 15 }}>
+          {carrinhoItens.map((item) => (
+            <View key={item.id} style={styles.view}>
+              <Text style={styles.text}>{item.quantidade}x</Text>
+              <Text style={styles.text}>{item.nome}</Text>
+              <Text style={styles.text}>Preço: R$ {item.preco}</Text>
+            </View>
+          ))}
+        </View>
+      ) : (
+        <Text style={[styles.text, { padding: 15 }]}>
+          Nenhum item no carrinho
+        </Text>
+      )}
 
       <View style={styles.viewPagamento}>
-        <Text style={styles.text}>Total: R$ {budgetCalculator()},00</Text>
+        <Text style={styles.text}>Total: R$ {budgetCalculator()}</Text>
       </View>
       <View style={styles.buttonView}>
         <Pressable
@@ -113,7 +106,7 @@ const Carrinho = ({ route, navigation }) => {
             navigation.goBack();
           }}
         >
-          <Text style={styles.btn_text_imagem}>Continuar Comprando</Text>
+          <Text style={styles.btn_text_imagem}>Escolher Mais</Text>
         </Pressable>
         <Pressable
           style={styles.button}
@@ -121,7 +114,7 @@ const Carrinho = ({ route, navigation }) => {
             finalizarPedido();
           }}
         >
-          <Text style={styles.btn_text_imagem}>Finalizar</Text>
+          <Text style={styles.btn_text_imagem}>Pedir</Text>
         </Pressable>
       </View>
     </ScrollView>
@@ -131,13 +124,14 @@ const Carrinho = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   view: {
     marginBottom: 15,
+    marginTop: 30,
     padding: 15,
     borderColor: "white",
     borderWidth: 2,
     borderRadius: 5,
     display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
     backgroundColor: "#091014",
     shadowColor: "black",
     shadowOffset: {
@@ -151,12 +145,12 @@ const styles = StyleSheet.create({
   },
   bg_black: {
     backgroundColor: "#091014",
-    // backgroundColor: "blue",
     minHeight: "100%",
   },
   text: {
     color: "white",
     fontSize: 20,
+    flexWrap: "wrap",
   },
   titulo: {
     color: "white",

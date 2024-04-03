@@ -18,14 +18,14 @@ export default function NavBar(props) {
         style={{ width: 50, height: 50 }}
       />
       <Text style={styles.titulo}>{props.nome}</Text>
-      {props.navigation && (
+      {/* {props.navigation && (
         <Ionicons
           onPress={() => props.navigation.toggleDrawer()}
           name="menu"
           size={38}
           color="white"
         />
-      )}
+      )} */}
     </View>
   );
 }
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
     alignItems: "center",
     backgroundColor: "#091014",
     padding: 10,
@@ -49,5 +49,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 36,
     color: "#FFD818",
+    
   },
 });

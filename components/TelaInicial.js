@@ -99,9 +99,7 @@ const TelaInicial = ({ navigation }) => {
           style={StyleSheet.absoluteFillObject}
         />
       ) : null}
-
-      <NavBar navigation={navigation} nome={name} />
-
+      <NavBar navigation={navigation} nome="BEM VINDO!" />
       <View style={styles.content}>
         {!abrirCamera ? (
           <Image source={require("../Content/logo.png")} style={styles.logo} />
@@ -109,15 +107,6 @@ const TelaInicial = ({ navigation }) => {
 
         {!abrirCamera ? (
           <View style={styles.buttonsContainer}>
-            {/* <Button
-              title="Ler QR Code"
-              style={styles.button}
-              onPress={() => {
-                setScanned(false);
-                setAbrirCamera(true);
-                setName("LEIA UM QR CODE");
-              }}
-            /> */}
             <TextInput
               style={styles.input}
               placeholder="Digite o seu nome"
@@ -139,11 +128,6 @@ const TelaInicial = ({ navigation }) => {
             >
               <Text style={styles.btn_text_imagem}>Ler QR Code</Text>
             </Pressable>
-            {/* <Button
-              title="Cardápio"
-              style={styles.button}
-              onPress={() => navigation.navigate("Cardapio")}
-            /> */}
             <Pressable
               style={styles.button}
               onPress={() => navigation.navigate("Cardapio")}
@@ -153,11 +137,11 @@ const TelaInicial = ({ navigation }) => {
           </View>
         ) : null}
 
-        {!abrirCamera ? (
+        {/* {!abrirCamera ? (
           <View style={styles.loginButtonContainer}>
             <Button title="Login" style={styles.loginButton} />
           </View>
-        ) : null}
+        ) : null} */}
       </View>
     </View>
   );

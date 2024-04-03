@@ -21,15 +21,13 @@ const App = () => {
           name="Home"
           component={TelaInicial}
           options={{
-            headerTitle: "Bem vindo!", // Set the header title
+            headerTitle: "Bem vindo!",
             headerStyle: {
-              backgroundColor: "#000", // Set header background color to black
-              // Use a custom component for more styling options
-              // headerTitle: (props) => <CustomHeaderTitle {...props} />,
+              backgroundColor: "#000",
             },
-            headerTintColor: "orange", // Set header text color to orange
+            headerTintColor: "orange",
             headerTitleStyle: {
-              textAlign: "center", // Center the header title
+              textAlign: "center",
             },
           }}
         />
