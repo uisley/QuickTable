@@ -18,6 +18,9 @@ import NavBar from "./NavBar";
 const Carrinho = ({ route, navigation }) => {
   const carrinhoItens = route.params.carrinhoItens;
 
+  const [idReserva, setIdReserva] = useState("");
+  const [nome, setNome] = useState("");
+
   const budgetCalculator = () => {
     let total = 0;
     carrinhoItens.forEach((item) => {
@@ -26,28 +29,80 @@ const Carrinho = ({ route, navigation }) => {
     return total;
   };
 
-  const finalizarPedido = () => {};
+  async function getValueFor(key) {
+    let result = await SecureStore.getItemAsync(key);
+    if (result) {
+      return result;
+    } else {
+      console.log("Nao foi encontrado valor para a key");
+      return null;
+    }
+  }
+
+  const finalizarPedido = async () => {
+    const url = "https://quicktable-back.onrender.com/pedidos";
+    const corpo = {
+      itemQuantidade: [
+        {
+          item: {
+            id: 1,
+          },
+          quantidade: 1,
+        },
+        {
+          item: {
+            id: 2,
+          },
+          quantidade: 1,
+        },
+      ],
+      reserva: {
+        id: Number(idReserva),
+      },
+      nome_cliente: nome,
+    };
+
+    axios
+      .post(url, corpo)
+      .then((response) => {
+        alert("Seu pedido foi concluído com sucesso!");
+      })
+      .catch((error) => {
+        // Trate o erro, se necessário
+      });
+  };
+
+  useEffect(() => {
+    const dados = async () => {
+      const r = await getValueFor("reserva");
+      const n = await getValueFor("nome");
+      setIdReserva(r);
+      setNome(n);
+    };
+    dados();
+  }, []);
 
   return (
     <ScrollView style={styles.bg_black}>
       <NavBar navigation={navigation} nome="Carrinho" />
+      <View style={styles.container}>
+        {carrinhoItens && carrinhoItens.length > 0 ? (
+          <View style={{ padding: 15 }}>
+            {carrinhoItens.map((item) => (
+              <View key={item.id} style={styles.view}>
+                <Text style={styles.text}>{item.quantidade}x</Text>
+                <Text style={styles.text}>{item.lanche}</Text>
+                <Text style={styles.text}>Preço: R$ {item.preco}</Text>
+              </View>
+            ))}
+          </View>
+        ) : (
+          <Text style={[styles.text, { padding: 15, marginTop: 120 }]}>
+            Nenhum item no carrinho
+          </Text>
+        )}
+      </View>
 
-      <Text style={styles.titulo}>Endereço:</Text>
-      {carrinhoItens && carrinhoItens.length > 0 ? (
-        <View style={{ padding: 15 }}>
-          {carrinhoItens.map((item) => (
-            <View key={item.id} style={styles.view}>
-              <Text style={styles.text}>{item.quantidade}x</Text>
-              <Text style={styles.text}>{item.lanche}</Text>
-              <Text style={styles.text}>Preço: R$ {item.preco}</Text>
-            </View>
-          ))}
-        </View>
-      ) : (
-        <Text style={[styles.text, { padding: 15 }]}>
-          Nenhum item no carrinho
-        </Text>
-      )}
       <View style={styles.viewPagamento}>
         <Text style={styles.text}>Total: R$ {budgetCalculator()},00</Text>
       </View>
@@ -95,8 +150,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   bg_black: {
-    // backgroundColor: "#091014",
-    backgroundColor: "blue",
+    backgroundColor: "#091014",
+    // backgroundColor: "blue",
     minHeight: "100%",
   },
   text: {

@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, Image, Text, Button, StyleSheet } from "react-native";
+import {
+  View,
+  Image,
+  Text,
+  Button,
+  StyleSheet,
+  Pressable,
+  TextInput,
+} from "react-native";
 import NavBar from "./NavBar";
 import { CameraView, Camera } from "expo-camera/next";
 import axios from "axios";
@@ -10,6 +18,8 @@ const TelaInicial = ({ navigation }) => {
   const [scanned, setScanned] = useState(false);
   const [abrirCamera, setAbrirCamera] = useState(false);
   const [name, setName] = useState("BEM VINDO!");
+  const [nomeDigitado, setNomeDigitado] = useState("");
+  const [botaoHabilitado, setBotaoHabilitado] = useState(false);
 
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
@@ -48,6 +58,8 @@ const TelaInicial = ({ navigation }) => {
       if (response.status == 200) {
         console.info("Entrou na reserva");
         save("mesa", data);
+        save("reserva", String(response.data.id));
+        save("nome", nomeDigitado);
 
         navigation.navigate("Cardapio");
       } else {
@@ -71,6 +83,11 @@ const TelaInicial = ({ navigation }) => {
     );
   }
 
+  const handleNomeChange = (text) => {
+    setNomeDigitado(text);
+    setBotaoHabilitado(text.length > 0);
+  };
+
   return (
     <View style={styles.container}>
       {abrirCamera ? (
@@ -92,7 +109,7 @@ const TelaInicial = ({ navigation }) => {
 
         {!abrirCamera ? (
           <View style={styles.buttonsContainer}>
-            <Button
+            {/* <Button
               title="Ler QR Code"
               style={styles.button}
               onPress={() => {
@@ -100,12 +117,39 @@ const TelaInicial = ({ navigation }) => {
                 setAbrirCamera(true);
                 setName("LEIA UM QR CODE");
               }}
+            /> */}
+            <TextInput
+              style={styles.input}
+              placeholder="Digite o seu nome"
+              value={nomeDigitado}
+              onChangeText={handleNomeChange}
             />
-            <Button
+            <Pressable
+              style={[
+                styles.button,
+                ,
+                !botaoHabilitado && styles.buttonDisabled,
+              ]}
+              onPress={() => {
+                setScanned(false);
+                setAbrirCamera(true);
+                setName("LEIA UM QR CODE");
+              }}
+              disabled={!botaoHabilitado}
+            >
+              <Text style={styles.btn_text_imagem}>Ler QR Code</Text>
+            </Pressable>
+            {/* <Button
               title="Cardápio"
               style={styles.button}
               onPress={() => navigation.navigate("Cardapio")}
-            />
+            /> */}
+            <Pressable
+              style={styles.button}
+              onPress={() => navigation.navigate("Cardapio")}
+            >
+              <Text style={styles.btn_text_imagem}>Cardápio</Text>
+            </Pressable>
           </View>
         ) : null}
 
@@ -141,13 +185,17 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     flexDirection: "row-wrap",
     justifyContent: "space-around",
-    height: 80,
   },
   button: {
-    backgroundColor: "#fff",
+    backgroundColor: "#006b3b",
     padding: 10,
     borderRadius: 5,
-    margin: 10,
+    marginHorizontal: 10,
+    marginBottom: 10,
+    width: 150,
+  },
+  buttonDisabled: {
+    backgroundColor: "#003f22", // Cor mais escura
   },
   loginButtonContainer: {
     position: "absolute",
@@ -165,6 +213,24 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     borderRadius: 10,
     marginBottom: 40,
+  },
+  btn_text_imagem: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: "bold",
+    letterSpacing: 0.25,
+    color: "white",
+  },
+  input: {
+    width: 150,
+    height: 40,
+    backgroundColor: "white",
+    marginTop: 10,
+    marginBottom: 10,
+    padding: 10,
+    color: "black",
+    borderRadius: 5,
+    marginLeft: 10,
   },
 });
 

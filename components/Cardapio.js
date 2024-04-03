@@ -33,9 +33,10 @@ const Cardapio = ({ navigation, route }) => {
   async function getValueFor(key) {
     let result = await SecureStore.getItemAsync(key);
     if (result) {
-      setIdMesa(result);
+      return result;
     } else {
       console.log("Nao foi encontrado valor para a key");
+      return null;
     }
   }
 
@@ -51,8 +52,12 @@ const Cardapio = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    getValueFor("mesa");
-    fetchData();
+    const dados = async () => {
+      const mesa = await getValueFor("mesa");
+      setIdMesa(mesa);
+      fetchData();
+    };
+    dados();
   }, []);
 
   return (
