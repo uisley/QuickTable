@@ -3,12 +3,10 @@ import {
   View,
   Text,
   StyleSheet,
-  View,
-  Text,
   Image,
-  StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Pressable,
 } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
@@ -20,15 +18,33 @@ const Cardapio = ({ navigation, route }) => {
   const [data, setData] = useState([]);
   const [carrinho, setCarrinho] = useState([]);
 
+  const handleAddToCart = (item) => {
+    const existingItem = carrinho.find((cartItem) => cartItem.id === item.id);
+
+    if (existingItem) {
+      // Update quantity for existing item
+      setCarrinho((prevCarrinho) =>
+        prevCarrinho.map((cartItem) =>
+          cartItem.id === item.id ? { ...cartItem, quantidade: cartItem.quantidade + 1 } : cartItem
+        )
+      );
+    } else {
+      // Add new item with quantity 1
+      setCarrinho((prevCarrinho) => [...prevCarrinho, { ...item, quantidade: 1 }]);
+    }
+  };
+
   const DataCard = ({ item }) => {
     return (
-      <View style={styles.card}>
-        <Text style={styles.title}>{item.nome}</Text>
-        <Text style={styles.category}>
-          Categoria: {item.categoria.categoria}
-        </Text>
+      <TouchableOpacity onPress={() => handleAddToCart(item)} style={styles.card}>
+        <View style={styles.cardContent}>
+          <Text style={styles.title}>{item.nome}</Text>
+          <Text style={styles.category}>
+            Categoria: {item.categoria.categoria}
+          </Text>
+        </View>
         <Text style={styles.price}>Preço: R${item.preco}</Text>
-      </View>
+      </TouchableOpacity>
     );
   };
 
